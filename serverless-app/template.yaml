@@ -18,12 +18,8 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
-      Auth:
-        ApiKeyRequired: true
-        UsagePlan:
-          CreateUsagePlan: PER_API
 
-  SynthesizeSpeechFunction:
+  GetQuoteFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambda_functions/GetQuote/
@@ -33,7 +29,7 @@ Resources:
         Variables:
           SOME_KEY: !Ref SomeKey
       Events:
-        Speech:
+        Quote:
           Type: Api
           Properties:
             RestApiId: !Ref QuoteApi
@@ -43,7 +39,5 @@ Resources:
 Outputs:
   QuoteApiUrl:
     Description: "API GW endpoint"
-    Value: !Sub "https://${QuoteApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/speech"
-  QuoteApiKey:
-    Description: "Api key"
-    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/apigateway/home?region=${AWS::Region}#/api-keys/${QuoteApi.ApiKey}"
+    Value: !Sub "https://${QuoteApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/quote"
+  

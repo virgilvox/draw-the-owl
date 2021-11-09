@@ -13,13 +13,16 @@
 
 #include "twilio_owl.h"
 
+#define SSID ""
+#define PASSWORD ""
 
 WiFiMulti wifiMulti;
 
+String API_URL = "https://6wt7wk9wkg.execute-api.us-west-2.amazonaws.com/Prod/quote";
 
 void setup() {
   Serial.begin(115200);
-  wifiMulti.addAP("Fawkes", "letmedothatforyou");
+  wifiMulti.addAP(SSID, PASSWORD);
 
   display.init();
   helloWorld("Hello Twilio!");
@@ -59,7 +62,7 @@ void loop() {
         Serial.print("[HTTP] begin...\n");
         // configure traged server and url
         //http.begin("https://www.howsmyssl.com/a/check", ca); //HTTPS
-        http.begin("http://dog-facts-api.herokuapp.com/api/v1/resources/dogs?number=1"); //HTTP
+        http.begin(API_URL); //HTTP
         int httpCode = http.GET();
         if(httpCode > 0) {
             Serial.printf("[HTTP] GET... code: %d\n", httpCode);
