@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  draw-the-owl
+
+Globals:
+  Function:
+    Timeout: 3
+
+Parameters:
+  SomeKey:
+    Type: String
+    Description: Arbitrary key in case we need it.
+
+
+Resources:
+  QuoteApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Auth:
+        ApiKeyRequired: true
+        UsagePlan:
+          CreateUsagePlan: PER_API
+
+  SynthesizeSpeechFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda_functions/GetQuote/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          SOME_KEY: !Ref SomeKey
+      Events:
+        Speech:
+          Type: Api
+          Properties:
+            RestApiId: !Ref QuoteApi
+            Path: /quote
+            Method: get
+
+Outputs:
+  QuoteApiUrl:
+    Description: "API GW endpoint"
+    Value: !Sub "https://${QuoteApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/speech"
+  QuoteApiKey:
+    Description: "Api key"
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/apigateway/home?region=${AWS::Region}#/api-keys/${QuoteApi.ApiKey}"
